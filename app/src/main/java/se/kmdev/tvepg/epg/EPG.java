@@ -323,6 +323,10 @@ public class EPG extends ViewGroup {
         mPaint.setColor(event.isCurrent() ? mEventLayoutBackgroundCurrent : mEventLayoutBackground);
         canvas.drawRect(drawingRect, mPaint);
 
+        // Recalculate drawingRect.left to prevent first event title from disappearing
+        drawingRect.left = isFirstVisibleEvent(event.getStart(), event.getEnd()) ?
+                getXFrom(getTimeFrom(getScrollX())) : drawingRect.left;
+
         // Add left and right inner padding
         drawingRect.left += mChannelLayoutPadding;
         drawingRect.right -= mChannelLayoutPadding;
@@ -618,6 +622,9 @@ public class EPG extends ViewGroup {
         mChannelImageCache.clear();
     }
 
+    private boolean isFirstVisibleEvent(final long start, final long end) {
+        return start <= mTimeLowerBoundary && end >= mTimeLowerBoundary;
+    }
 
     private class OnGestureListener extends GestureDetector.SimpleOnGestureListener {
 
